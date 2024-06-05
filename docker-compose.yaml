@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15.5
+    ports:
+      - "5432:5432"
+
+    environment:
+      POSTGRES_DB: property_housing_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  elt_script:
+    build: .
+    environment:
+      - user=${POSTGRES_USER}
+      - password=${POSTGRES_PASSWORD}
+      - host=${POSTGRES_HOST}
+      - port=${POSTGRES_PORT}
+      - database=${POSTGRES_DB}
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:
